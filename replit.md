@@ -1,34 +1,39 @@
-# NLP Hukum - AI GDrive Backend
+# NLP Hukum - AI Legal Document Assistant
 
 ## Overview
-A FastAPI-based AI backend for searching and retrieving legal documents from Google Drive. The system uses NLP techniques to match user queries to relevant legal documents.
+A full-stack application with a ChatGPT-style dashboard for searching legal documents in Google Drive. Uses NLP/AI to match user queries to relevant Indonesian legal documents (UU, Peraturan, etc).
 
 ## Project Structure
 ```
-Backend/
-  - main.py         # Entry point, starts uvicorn server on port 5000
-  - api.py          # FastAPI endpoints
-  - ai_engine.py    # AI/NLP logic for document matching
-  - models-asset/   # Pre-trained models and document metadata
-  - ml_assets/      # Symlink to models-asset
+Backend/                    # Python FastAPI backend (port 8000)
+  - main.py                 # Entry point, uvicorn server
+  - api.py                  # FastAPI endpoints
+  - ai_engine.py            # AI/NLP document matching logic
+  - models-asset/           # Pre-trained models and metadata
+  - ml_assets/              # Symlink to models-asset
+
+frontend/                   # Next.js frontend (port 5000)
+  - src/app/                # Next.js app router pages
+  - src/components/         # React components (Sidebar, ChatArea)
+  - src/types/              # TypeScript type definitions
 ```
 
-## API Endpoints
+## API Endpoints (Backend)
 - `GET /` - Health check, returns AI status
-- `POST /api/chat` - Main chat endpoint, accepts message and returns matching documents
-- `GET /api/file/list` - Debug endpoint to list loaded models
+- `POST /api/chat` - Main chat endpoint, returns matching documents
+- `GET /api/file/list` - Debug endpoint for loaded models
 
 ## Running the Application
-The server runs on port 5000 using the command:
-```
-cd Backend && python main.py
-```
+- Frontend (port 5000): `cd frontend && npm run dev`
+- Backend (port 8000): `cd Backend && python main.py`
 
 ## Dependencies
-- FastAPI
-- Uvicorn
-- Pydantic
-- rank_bm25
+### Backend (Python)
+- FastAPI, Uvicorn, Pydantic, rank_bm25
+
+### Frontend (Node.js)
+- Next.js 14, React 18, Tailwind CSS
 
 ## Recent Changes
-- 2024-12-13: Initial Replit setup, configured for port 5000
+- 2024-12-13: Added Next.js frontend with ChatGPT-style dashboard
+- 2024-12-13: Initial Replit setup

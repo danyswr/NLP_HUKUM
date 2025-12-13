@@ -19,25 +19,23 @@ class AIEngine:
         self.tokenizer = None
         self.index = None
         self.chunks = None
-        self.metadata = None  # Kita pake ini buat mapping Filename -> GDrive ID
+        self.file_names = []
         self.is_ready = False
 
     def load_models(self):
         print(f"🔄 Memulai proses loading model dari '{ASSETS_DIR}'...")
         try:
-            # 1. Load Metadata (Mapping GDrive)
+            # 1. Load Metadata
             meta_path = os.path.join(ASSETS_DIR, "metadata.json")
             if os.path.exists(meta_path):
                 with open(meta_path, "r") as f:
-                    self.metadata = json.load(f)
-                print("✅ Metadata (Mapping GDrive) loaded")
+                    raw_metadata = json.load(f)
+                # file_names is a list, convert to usable format
+                self.file_names = raw_metadata.get("file_names", [])
+                print(f"✅ Metadata loaded - {len(self.file_names)} dokumen")
             else:
-                self.metadata = {
-                    "laporan_keuangan.pdf": "12345_dummy_id_laporan",
-                    "sop_perusahaan.docx": "67890_dummy_id_sop",
-                    "data_karyawan.xlsx": "abcde_dummy_id_karyawan"
-                }
-                print("⚠️ Metadata tidak ditemukan, menggunakan Dummy Data.")
+                self.file_names = []
+                print("⚠️ Metadata tidak ditemukan.")
 
             # Load model lain...
             chunks_path = os.path.join(ASSETS_DIR, "chunks.pkl")
@@ -54,42 +52,46 @@ class AIEngine:
 
     def predict_filename(self, user_message: str) -> list:
         """
-        Fungsi ini mengembalikan LIST nama file.
-        Bisa 0, 1, atau banyak file tergantung deteksi model.
+        Cari file berdasarkan keyword dalam user message.
+        Mencocokkan dengan daftar file dari metadata.
         """
-        # --- LOGIC AI ASLI (Nanti uncomment) ---
-        # input_ids = self.tokenizer(user_message)
-        # predicted_labels = self.model(input_ids) # Pastikan model return list/multilabel
-        # filenames = [self.label_decoder(lbl) for lbl in predicted_labels]
-        # return filenames
-        
-        # --- LOGIC DUMMY (Support Multi-File) ---
         user_message = user_message.lower()
         found_files = []
         
-        # Cek keyword satu per satu (bisa trigger banyak sekaligus)
-        if "keuangan" in user_message or "duit" in user_message:
-            found_files.append("laporan_keuangan.pdf")
+        # Ekstrak keywords dari message
+        keywords = user_message.replace("cari", "").replace("tentang", "").replace("dokumen", "").split()
+        keywords = [k.strip() for k in keywords if len(k) > 2]
         
-        if "sop" in user_message or "aturan" in user_message:
-            found_files.append("sop_perusahaan.docx")
-            
-        if "karyawan" in user_message:
-            found_files.append("data_karyawan.xlsx")
-            
-        return found_files
+        # Cari file yang cocok dengan keyword
+        for filename in self.file_names:
+            filename_lower = filename.lower()
+            for keyword in keywords:
+                if keyword in filename_lower:
+                    if filename not in found_files:
+                        found_files.append(filename)
+                    break
+        
+        # Limit hasil maksimal 5 file
+        return found_files[:5]
 
     def get_gdrive_link(self, filename: str):
         """
-        Mengambil link download/view berdasarkan nama file.
+        Mengambil link berdasarkan nama file.
+        Catatan: Metadata saat ini hanya berisi list nama file tanpa individual GDrive ID.
+        Untuk production, perlu ditambahkan mapping filename -> gdrive_id di metadata.json
         """
-        if not self.metadata or filename not in self.metadata:
+        if filename not in self.file_names:
             return None, None
-
-        file_id = self.metadata[filename]
-        view_link = f"https://drive.google.com/file/d/{file_id}/view?usp=sharing"
         
-        return file_id, view_link
+        # Encode filename untuk URL search di Google Drive folder
+        encoded_name = filename.replace(" ", "+")
+        search_url = f"https://drive.google.com/drive/folders/{GDRIVE_FOLDER_ID}?q={encoded_name}"
+        
+        # Generate unique ID dari filename
+        import hashlib
+        file_id = hashlib.md5(filename.encode()).hexdigest()[:12]
+        
+        return file_id, search_url
 
     def process_query(self, user_message: str):
         """
@@ -126,13 +128,21 @@ class AIEngine:
             }
 
         # 3. Siapkan response sukses dengan list file
-        file_list_str = ", ".join([r['filename'] for r in results])
+        file_count = len(results)
+        if file_count == 1:
+            reply = f"Saya menemukan 1 dokumen yang cocok: {results[0]['filename']}"
+        else:
+            file_list_str = ", ".join([r['filename'] for r in results[:3]])
+            if file_count > 3:
+                reply = f"Saya menemukan {file_count} dokumen yang cocok, termasuk: {file_list_str}, dan lainnya."
+            else:
+                reply = f"Saya menemukan {file_count} dokumen yang cocok: {file_list_str}"
         
         return {
             "found": True,
-            "files": results, # Return List of Objects
+            "files": results,
             "gdrive_folder": f"https://drive.google.com/drive/folders/{GDRIVE_FOLDER_ID}",
-            "reply": f"Saya menemukan beberapa file yang cocok: {file_list_str}"
+            "reply": reply
         }
 
 ai_bot = AIEngine()
