@@ -35,5 +35,8 @@ frontend/                   # Next.js frontend (port 5000)
 - Next.js 14, React 18, Tailwind CSS
 
 ## Recent Changes
+- 2024-12-13: Fixed AI model search flow - now uses BM25 on document content, returns up to 10 relevant files
+- 2024-12-13: Added FileModal popup for document preview with download button
+- 2024-12-13: Loaded dataset_bpk.csv (115 documents) for better semantic search
 - 2024-12-13: Added Next.js frontend with ChatGPT-style dashboard
 - 2024-12-13: Initial Replit setup
