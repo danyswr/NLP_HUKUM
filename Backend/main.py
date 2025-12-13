@@ -6,7 +6,7 @@ import os
 # python main.py
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 8000))
     
     print(f"🚀 Starting AI Server on port {port}...")
     print("📂 Pastikan folder 'ml_assets' dan file 'ai_engine.py' sudah siap.")
