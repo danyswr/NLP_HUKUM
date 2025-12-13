@@ -8,13 +8,7 @@ const nextConfig = {
       },
     ];
   },
-  allowedDevOrigins: [
-    'localhost',
-    '127.0.0.1',
-    '*.replit.dev',
-    '*.repl.co',
-    '*.pike.replit.dev',
-  ],
+  allowedDevOrigins: ['*'],
 };
 
 module.exports = nextConfig;
