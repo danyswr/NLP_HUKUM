@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { Message, Conversation, ChatResponse, GDriveFile } from '@/types'
+import FileModal from './FileModal'
 
 interface ChatAreaProps {
   conversation: Conversation | undefined
@@ -18,6 +19,8 @@ export default function ChatArea({
 }: ChatAreaProps) {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<GDriveFile | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -27,6 +30,16 @@ export default function ChatArea({
   useEffect(() => {
     scrollToBottom()
   }, [conversation?.messages])
+
+  const openFileModal = (file: GDriveFile) => {
+    setSelectedFile(file)
+    setIsModalOpen(true)
+  }
+
+  const closeFileModal = () => {
+    setIsModalOpen(false)
+    setSelectedFile(null)
+  }
 
   const sendMessage = async () => {
     if (!input.trim() || !conversation || isLoading) return
@@ -134,12 +147,10 @@ export default function ChatArea({
                 {message.files && message.files.length > 0 && (
                   <div className="mt-3 space-y-2">
                     {message.files.map((file: GDriveFile) => (
-                      <a
+                      <button
                         key={file.gdrive_id}
-                        href={file.gdrive_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-3 p-3 bg-[#2f2f2f] rounded-lg hover:bg-[#3f3f3f] transition-colors"
+                        onClick={() => openFileModal(file)}
+                        className="w-full flex items-center gap-3 p-3 bg-[#2f2f2f] rounded-lg hover:bg-[#3f3f3f] transition-colors text-left"
                       >
                         <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center flex-shrink-0">
                           <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -149,12 +160,13 @@ export default function ChatArea({
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">{file.filename}</p>
-                          <p className="text-xs text-[#9b9b9b]">Google Drive</p>
+                          <p className="text-xs text-[#9b9b9b]">Klik untuk preview & download</p>
                         </div>
-                        <svg className="w-4 h-4 text-[#9b9b9b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        <svg className="w-5 h-5 text-[#9b9b9b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
-                      </a>
+                      </button>
                     ))}
                     
                     {message.folderUrl && (
@@ -229,6 +241,12 @@ export default function ChatArea({
           </p>
         </div>
       </div>
+
+      <FileModal
+        file={selectedFile}
+        isOpen={isModalOpen}
+        onClose={closeFileModal}
+      />
     </div>
   )
 }

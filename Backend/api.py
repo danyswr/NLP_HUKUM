@@ -30,6 +30,7 @@ class GDriveFile(BaseModel):
     filename: str
     gdrive_url: str
     gdrive_id: str
+    preview: Optional[str] = None
 
 # Response utama sekarang menampung list of files (ARRAY)
 class ChatResponse(BaseModel):

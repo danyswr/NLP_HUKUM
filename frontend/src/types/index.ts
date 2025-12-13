@@ -2,6 +2,7 @@ export interface GDriveFile {
   filename: string
   gdrive_url: string
   gdrive_id: string
+  preview?: string
 }
 
 export interface Message {
