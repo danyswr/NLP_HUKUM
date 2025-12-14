@@ -1,0 +1,37 @@
+◄ 2s ◎ pip install fastapi uvicorn pydantic rank-bm25 --break-system-packages
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: fastapi in /home/danyswr/.local/lib/python3.13/site-packages (0.121.0)
+Requirement already satisfied: uvicorn in /home/danyswr/.local/lib/python3.13/site-packages (0.24.0)
+Requirement already satisfied: pydantic in /home/danyswr/.local/lib/python3.13/site-packages (2.12.3)
+Requirement already satisfied: rank-bm25 in /home/danyswr/.local/lib/python3.13/site-packages (0.2.2)
+Requirement already satisfied: starlette<0.50.0,>=0.40.0 in /home/danyswr/.local/lib/python3.13/site-packages (from fastapi) (0.49.3)
+Requirement already satisfied: typing-extensions>=4.8.0 in /usr/lib/python3.13/site-packages (from fastapi) (4.15.0)
+Requirement already satisfied: annotated-doc>=0.0.2 in /home/danyswr/.local/lib/python3.13/site-packages (from fastapi) (0.0.3)
+Requirement already satisfied: annotated-types>=0.6.0 in /home/danyswr/.local/lib/python3.13/site-packages (from pydantic) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.4 in /home/danyswr/.local/lib/python3.13/site-packages (from pydantic) (2.41.4)
+Requirement already satisfied: typing-inspection>=0.4.2 in /home/danyswr/.local/lib/python3.13/site-packages (from pydantic) (0.4.2)
+Requirement already satisfied: anyio<5,>=3.6.2 in /home/danyswr/.local/lib/python3.13/site-packages (from starlette<0.50.0,>=0.40.0->fastapi) (4.11.0)
+Requirement already satisfied: idna>=2.8 in /usr/lib/python3.13/site-packages (from anyio<5,>=3.6.2->starlette<0.50.0,>=0.40.0->fastapi) (3.11)
+Requirement already satisfied: sniffio>=1.1 in /home/danyswr/.local/lib/python3.13/site-packages (from anyio<5,>=3.6.2->starlette<0.50.0,>=0.40.0->fastapi) (1.3.1)
+Requirement already satisfied: click>=7.0 in /usr/lib/python3.13/site-packages (from uvicorn) (8.2.1)
+Requirement already satisfied: h11>=0.8 in /home/danyswr/.local/lib/python3.13/site-packages (from uvicorn) (0.16.0)
+Requirement already satisfied: numpy in /usr/lib/python3.13/site-packages (from rank-bm25) (2.3.5)
+                                                                                                                                                                           ▴330▿415
+◄ 0s ◎ python main.py
+🚀 Starting AI Server on port 8080...
+📂 Pastikan folder 'ml_assets' dan file 'ai_engine.py' sudah siap.
+INFO:     Will watch for changes in these directories: ['/home/danyswr/kerjaan_danis/pythonn/NLP_HUKUM/Backend']
+INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
+INFO:     Started reloader process [246475] using WatchFiles
+INFO:     Started server process [246477]
+INFO:     Waiting for application startup.
+🔄 Memulai proses loading model dari 'models-asset'...
+✅ Metadata loaded - 115 dokumen
+✅ Chunks loaded - 11201 chunks
+✅ BM25 index loaded from pickle
+📂 Loading dataset dari models-asset/dataset_bpk.csv...
+✅ Dataset loaded - 115 dokumen unik
+🔄 Building BM25 index dari documents...
+✅ BM25 index built - 115 dokumen
+🚀 AI Engine siap!
+INFO:     Application startup complete.
